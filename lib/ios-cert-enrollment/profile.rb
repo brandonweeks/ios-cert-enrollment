@@ -80,7 +80,20 @@ module IOSCertEnrollment
         return self
     end
 
+    def unencrypted_configuration(content)
+        payload = general_payload()
+        payload['PayloadIdentifier'] = self.identifier+".intranet"
+        payload['PayloadType'] = "Configuration" # do not modify
 
+        # strings that show up in UI, customisable
+        payload['PayloadDisplayName'] = self.display_name
+        payload['PayloadDescription'] = self.description
+        payload['PayloadExpirationDate'] = self.expiration || Date.today + (360 * 10) # expire in 10 years
+
+        payload['PayloadContent'] = content
+        self.payload = Plist::Emit.dump(payload)
+        return self
+    end
 
     def configuration(encrypted_content)
         payload = general_payload()
